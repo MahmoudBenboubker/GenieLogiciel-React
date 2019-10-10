@@ -1,14 +1,15 @@
 import React, { Component } from "react";
 import { Form } from "react-bootstrap";
 import styled from "styled-components";
-import { postCours,getCours } from "../../fetch-API/cours";
+import { postCours, updateCours } from "../../fetch-API/cours";
 
 export default class AddCours extends Component {
   constructor(props) {
     super(props);
     this.state = {
       intitule: "",
-      description: ""
+      description: "",
+      idCour: ""
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -24,17 +25,34 @@ export default class AddCours extends Component {
     });
   }
 
+  componentDidMount() {
+    if (this.props.location.state) {
+      const e = this.props.location.state.cours;
+      console.log(e);
+      this.setState({
+        idCour: e.idCour,
+        intitule: e.intitule,
+        description: e.description
+      });
+    } else {
+    }
+  }
   handleSubmit(event) {
     const cours = {
+      idCour: this.state.idCour,
       intitule: this.state.intitule,
       description: this.state.description
     };
-    postCours(cours).then(this.props.history.push("/cours",{cours : cours}));
+    if (this.props.location.state) {
+      console.log(cours)
+      updateCours(cours).then(this.props.history.push("/cours"))
+    } else {
+      postCours(cours).then(this.props.history.push("/cours"));
+    }
     event.preventDefault();
   }
 
   render() {
-    getCours();
     return (
       <React.Fragment>
         <Background>
@@ -61,6 +79,7 @@ export default class AddCours extends Component {
                 <Form.Control
                   name="description"
                   onChange={this.handleChange}
+                  value={this.state.description}
                   required
                   as="textarea"
                   rows="3"
@@ -68,7 +87,7 @@ export default class AddCours extends Component {
               </Form.Group>
 
               <Button primary type="submit">
-                Ajouter
+                Confirmer
               </Button>
             </Form>
           </Wrapper>

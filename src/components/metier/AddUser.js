@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import { Form } from "react-bootstrap";
 import styled from "styled-components";
-import { postEnseignant } from "../../fetch-API/users";
+import { postEnseignant, updateEnseignant } from "../../fetch-API/users";
 
 export default class AddUser extends Component {
   constructor(props) {
     super(props);
-
-    this.state = { matricule: "", nom: "", prenom: "", email: "" };
+    this.state = { idEnseignant: "", nom: "", prenom: "", email: "" };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -22,51 +21,35 @@ export default class AddUser extends Component {
     });
   }
 
-  formStatut() {
-    if (this.state.userStatut === "Étudiant") {
-      return (
-        <React.Fragment>
-          <Form.Group controlId="formGenie">
-            <Form.Label>Génie</Form.Label>
-            <Form.Control as="select">
-              <option>...</option>
-              <option>Génie Informatique</option>
-              <option>Génie Civil</option>
-              <option>Génie Industriel</option>
-              <option>Génie Électrique</option>
-            </Form.Control>
-            <Form.Text className="text-muted">
-              Entrer le génie de l'étudiant.
-            </Form.Text>
-          </Form.Group>
-
-          <Form.Group controlId="formGenie">
-            <Form.Label>Promotion</Form.Label>
-            <Form.Control as="select">
-              <option>...</option>
-              <option>1ère Année</option>
-              <option>2ème Année</option>
-              <option>3ème Année</option>
-            </Form.Control>
-            <Form.Text className="text-muted">
-              Indiquer l'année de l'étudiant.
-            </Form.Text>
-          </Form.Group>
-        </React.Fragment>
-      );
-    }
+  componentDidMount() {
+    if (this.props.location.state) {
+      const e = this.props.location.state.enseignant;
+      this.setState({
+        idEnseignant: e.idEnseignant,
+        email: e.mail,
+        nom: e.nom,
+        prenom: e.prenom
+      });
+    }else {}
   }
 
   handleSubmit(event) {
     event.preventDefault();
     const enseignant = {
-      idEnseignant: this.state.matricule,
+      idEnseignant: this.state.idEnseignant,
       nom: this.state.nom,
       prenom: this.state.prenom,
       mail: this.state.email
     };
-
-    postEnseignant(enseignant).then(this.props.history.push("/enseignants",{enseignant : enseignant}));
+    if (this.props.location.state) {
+      updateEnseignant(enseignant).then(
+        this.props.history.push("/enseignants",{ enseignant: enseignant })
+      );
+    } else {
+      postEnseignant(enseignant).then(
+        this.props.history.push("/enseignants", { enseignant: enseignant })
+      );
+    }
   }
 
   render() {
@@ -100,8 +83,8 @@ export default class AddUser extends Component {
             <Form.Group controlId="formMatricule">
               <Form.Label>Matricule</Form.Label>
               <Form.Control
-                name="matricule"
-                value={this.state.matricule}
+                name="idEnseignant"
+                value={this.state.idEnseignant}
                 onChange={this.handleInputChange}
                 type="number"
                 placeholder=""
@@ -120,7 +103,7 @@ export default class AddUser extends Component {
             </Form.Group>
 
             <Button onSubmit={this.handleSubmit} primary type="submit">
-              Ajouter
+              Confirmer
             </Button>
           </Form>
         </Wrapper>

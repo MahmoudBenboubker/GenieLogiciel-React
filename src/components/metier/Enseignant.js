@@ -7,13 +7,17 @@ import { getEnseignants, deleteEnseignant } from "../../fetch-API/users.js";
 export default class Enseignant extends Component {
   constructor(props) {
     super(props);
-    this.state = { data: [] };
+    this.state = { data: [], isLoading : true };
   }
 
   showCours(r) {
     this.props.history.push("/cours", { enseignant: r });
   }
 
+  updateEnseignant(r) {
+    this.props.history.push("/ajouter-enseignant", { enseignant: r });
+  }
+  
   deleteEnseignant(r) {
     deleteEnseignant(r).then(console.log("Suppression réussite"));
     this.setState({
@@ -22,12 +26,14 @@ export default class Enseignant extends Component {
   }
 
   componentDidMount() {
-    getEnseignants()
-      .then(response => this.setState({ data: response }))
-      .catch();
+    getEnseignants().then(response => this.setState({ data: response })).then(this.setState({isLoading:false}));
   }
 
   render() {
+    const isLoading = this.state.isLoading
+    if (isLoading){
+     console.log("Loading")
+    }
     const enseignantArray = this.state.data.map((r, i) => {
       return (
         <tr key={i}>
@@ -37,9 +43,14 @@ export default class Enseignant extends Component {
           <td>{r.mail}</td>
           <td>
             <Button onClick={() => this.showCours(r)} variant="outline-dark">
-              Cours{" "}
+              Cours
+            </Button>{" "}
+            <Button
+              onClick={() => this.updateEnseignant(r)}
+              variant="outline-success"
+            >
+              Modifier
             </Button>
-            <Button variant="outline-success">Modifier</Button>{" "}
             <Button
               onClick={() => this.deleteEnseignant(r)}
               variant="outline-danger"
@@ -52,6 +63,8 @@ export default class Enseignant extends Component {
     });
     return (
       <Wrapper>
+        <Button href="/ajouter-enseignant">Ajouter Enseignant</Button>
+
         <Table responsive>
           <thead>
             <tr>

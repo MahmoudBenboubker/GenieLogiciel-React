@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react'
 
- export const Contact = () => {
-  const greeting = 'Hello Contact!';
-  return <h1>{greeting}</h1>;
-    }
-
+export default class Connexion extends Component {
+  render() {
+    return (
+      <React.Fragment>
+        
+      </React.Fragment>
+    )
+  }
+}
