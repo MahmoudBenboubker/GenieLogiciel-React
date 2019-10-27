@@ -1,4 +1,4 @@
-import React from 'react';
+import React  from 'react';
 import styled from 'styled-components'
 
 
@@ -14,13 +14,15 @@ const Wrapper = styled.section`
 `;
 
 
- export const Home = () => {
+ export class Home extends React.Component {
+
+   render(){
   return (
     <Wrapper>
     <Title>
       Accueil, Bienvenue sur le site
     </Title>
   </Wrapper>
-        );
+        );}
     }
 

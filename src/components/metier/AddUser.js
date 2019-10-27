@@ -30,7 +30,8 @@ export default class AddUser extends Component {
         nom: e.nom,
         prenom: e.prenom
       });
-    }else {}
+    } else {
+    }
   }
 
   handleSubmit(event) {
@@ -43,7 +44,7 @@ export default class AddUser extends Component {
     };
     if (this.props.location.state) {
       updateEnseignant(enseignant).then(
-        this.props.history.push("/enseignants",{ enseignant: enseignant })
+        this.props.history.push("/enseignants", { enseignant: enseignant })
       );
     } else {
       postEnseignant(enseignant).then(
@@ -52,15 +53,30 @@ export default class AddUser extends Component {
     }
   }
 
+  title() {
+    if (this.props.location.state) {
+      return (
+        <Title>
+          Modifier l'enseignant :{" "}
+          <b>
+            {this.state.nom} {"    "} {this.state.prenom}
+          </b>
+        </Title>
+      );
+    } else {
+      return <Title>Ajouter d'un nouvel enseignant</Title>;
+    }
+  }
   render() {
     return (
       <React.Fragment>
-        <Title>Ajouter un nouvel enseignant</Title>
+        {this.title()}
         <Wrapper>
           <Form onSubmit={this.handleSubmit}>
             <Form.Group controlId="formLastName">
               <Form.Label>Nom</Form.Label>
               <Form.Control
+                required
                 name="nom"
                 value={this.state.nom}
                 onChange={this.handleInputChange}
@@ -72,6 +88,7 @@ export default class AddUser extends Component {
             <Form.Group controlId="formFirstName">
               <Form.Label>Prénom</Form.Label>
               <Form.Control
+                required
                 name="prenom"
                 value={this.state.prenom}
                 onChange={this.handleInputChange}
@@ -83,6 +100,7 @@ export default class AddUser extends Component {
             <Form.Group controlId="formMatricule">
               <Form.Label>Matricule</Form.Label>
               <Form.Control
+                required
                 name="idEnseignant"
                 value={this.state.idEnseignant}
                 onChange={this.handleInputChange}
@@ -95,6 +113,7 @@ export default class AddUser extends Component {
               <Form.Label>Email</Form.Label>
               <Form.Control
                 name="email"
+                required
                 value={this.state.email}
                 onChange={this.handleInputChange}
                 type="email"

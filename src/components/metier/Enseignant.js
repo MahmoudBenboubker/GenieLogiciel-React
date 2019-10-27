@@ -7,7 +7,7 @@ import { getEnseignants, deleteEnseignant } from "../../fetch-API/users.js";
 export default class Enseignant extends Component {
   constructor(props) {
     super(props);
-    this.state = { data: [], isLoading : true };
+    this.state = { data: [], isLoading: true };
   }
 
   showCours(r) {
@@ -16,8 +16,9 @@ export default class Enseignant extends Component {
 
   updateEnseignant(r) {
     this.props.history.push("/ajouter-enseignant", { enseignant: r });
+    this.setState({isLoading:true, data :[]})
   }
-  
+
   deleteEnseignant(r) {
     deleteEnseignant(r).then(console.log("Suppression réussite"));
     this.setState({
@@ -25,14 +26,17 @@ export default class Enseignant extends Component {
     });
   }
 
-  componentDidMount() {
-    getEnseignants().then(response => this.setState({ data: response })).then(this.setState({isLoading:false}));
+  async componentDidMount() {
+    this.setState({ isLoading: true, data: [] });
+    await getEnseignants()
+      .then(response => this.setState({ data: response }))
+      .then(this.setState({ isLoading: false }));
   }
 
   render() {
-    const isLoading = this.state.isLoading
-    if (isLoading){
-     console.log("Loading")
+    const isLoading = this.state.isLoading;
+    if (isLoading) {
+      console.log("Loading");
     }
     const enseignantArray = this.state.data.map((r, i) => {
       return (
@@ -63,7 +67,12 @@ export default class Enseignant extends Component {
     });
     return (
       <Wrapper>
-        <Button href="/ajouter-enseignant">Ajouter Enseignant</Button>
+        <Button
+          onClick={() => this.setState({ isLoading: true, data: [] })}
+          href="/ajouter-enseignant"
+        >
+          Ajouter Enseignant
+        </Button>
 
         <Table responsive>
           <thead>

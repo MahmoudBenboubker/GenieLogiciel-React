@@ -1,12 +1,16 @@
 const API_Link = "http://localhost:8080";
 
 export function postCours(cours) {
+  const t = localStorage.getItem("token");
   return fetch(`${API_Link}/cours/add`, {
     method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "Access-Control-Allow-Credentials": true
+      "Access-Control-Allow-Credentials": true,
+      Origin: "http://localhost:4200",
+      "Access-Control-Allow-Origin": "http://localhost:4200",
+      Authorization: `Bearer ${t}`
     },
     body: JSON.stringify(cours)
   })
@@ -17,12 +21,16 @@ export function postCours(cours) {
 }
 
 export function updateCours(r) {
+  const t = localStorage.getItem("token");
   return fetch(`${API_Link}/cours/add`, {
     method: "PUT",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "Access-Control-Allow-Credentials": true
+      "Access-Control-Allow-Credentials": true,
+      Origin: "http://localhost:4200",
+      "Access-Control-Allow-Origin": "http://localhost:4200",
+      Authorization: `Bearer ${t}`
     },
     body: JSON.stringify(r)
   })
@@ -32,31 +40,53 @@ export function updateCours(r) {
     .catch(err => err);
 }
 
-
 export function getCours() {
-  return fetch(`${API_Link}/cours`)
-    .then(response => response.json())
-    .catch(error => console.error(error));
-}
-
-export function getCoursByMatricule(id) {
-  return fetch(`${API_Link}/enseignants/${id}`)
-    .then(response => response.json())
-    .catch(error => console.error(error));
-}
-
-
-
-export function deleteCours(e) {
-  return fetch(`${API_Link}/cours/${e.idCour}`, {
-    method: "DELETE",
+  const t = localStorage.getItem("token");
+  return fetch(`${API_Link}/cours`, {
+    method: "GET",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "Access-Control-Allow-Credentials": true
+      "Access-Control-Allow-Credentials": true,
+      Origin: "http://localhost:4200",
+      "Access-Control-Allow-Origin": "http://localhost:4200",
+      Authorization: `Bearer ${t}`
     }
   })
     .then(response => response.json())
     .catch(error => console.error(error));
 }
 
+export function getCoursByMatricule(id) {
+  const t = localStorage.getItem("token");
+  return fetch(`${API_Link}/enseignants/${id}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Credentials": true,
+      Origin: "http://localhost:4200",
+      "Access-Control-Allow-Origin": "http://localhost:4200",
+      Authorization: `Bearer ${t}`
+    }
+  })
+    .then(response => response.json())
+    .catch(error => console.error(error));
+}
+
+export function deleteCours(e) {
+  const t = localStorage.getItem("token");
+  return fetch(`${API_Link}/cours/${e.idCour}`, {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Credentials": true,
+      Origin: "http://localhost:4200",
+      "Access-Control-Allow-Origin": "http://localhost:4200",
+      Authorization: `Bearer ${t}`
+    }
+  })
+    .then(response => response.json())
+    .catch(error => console.error(error));
+}

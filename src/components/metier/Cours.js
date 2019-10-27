@@ -38,10 +38,11 @@ export default class Cours extends Component {
       data: this.state.data.filter(e => e.idCour !== r.idCour)
     });
   }
-  componentDidMount() {
-  this.setState({isLoading:true})
+ 
+ async componentDidMount() {
+  this.setState({isLoading:true, data :[]})
 
-      getCours()
+    await  getCours()
         .then(response => this.setState({ data: response }))
         .catch()
       ;
