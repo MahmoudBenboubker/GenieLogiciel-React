@@ -11,7 +11,7 @@ export default class Enseignant extends Component {
   }
 
   showCours(r) {
-    this.props.history.push("/cours", { enseignant: r });
+    this.props.history.push("/affectation-enseignant", { enseignant: r });
   }
 
   updateEnseignant(r) {
@@ -46,8 +46,8 @@ export default class Enseignant extends Component {
           <td>{r.prenom}</td>
           <td>{r.mail}</td>
           <td>
-            <Button onClick={() => this.showCours(r)} variant="outline-dark">
-              Cours
+            <Button onClick={() => this.showCours(r)} variant="outline-primary">
+              Affecter
             </Button>{" "}
             <Button
               onClick={() => this.updateEnseignant(r)}

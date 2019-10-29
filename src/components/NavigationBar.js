@@ -41,7 +41,7 @@ export default class NavigationBar extends Component {
           </Nav.Item>
           <Nav.Item>
             {" "}
-            <Nav.Link href="/about">A propos</Nav.Link>
+            <Nav.Link href="/etudiants">Étudiants</Nav.Link>
           </Nav.Item>
           <Nav.Item>
             {" "}

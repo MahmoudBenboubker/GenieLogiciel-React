@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Form } from "react-bootstrap";
 import styled from "styled-components";
-import { postCours, updateCours } from "../../fetch-API/cours";
+import { postCours } from "../../fetch-API/cours";
 
 export default class AddCours extends Component {
   constructor(props) {
@@ -9,7 +9,7 @@ export default class AddCours extends Component {
     this.state = {
       intitule: "",
       description: "",
-      idCour: ""
+      idCours: ""
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -30,7 +30,7 @@ export default class AddCours extends Component {
       const e = this.props.location.state.cours;
       console.log(e);
       this.setState({
-        idCour: e.idCour,
+        idCours: e.idCours,
         intitule: e.intitule,
         description: e.description
       });
@@ -38,18 +38,15 @@ export default class AddCours extends Component {
     }
   }
   handleSubmit(event) {
+    event.preventDefault();
     const cours = {
-      idCour: this.state.idCour,
+      idCours: this.state.idCours,
       intitule: this.state.intitule,
       description: this.state.description
     };
-    if (this.props.location.state) {
-      console.log(cours)
-      updateCours(cours).then(this.props.history.push("/cours"))
-    } else {
+  
       postCours(cours).then(this.props.history.push("/cours"));
-    }
-    event.preventDefault();
+    
   }
 
   render() {

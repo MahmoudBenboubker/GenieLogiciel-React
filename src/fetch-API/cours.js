@@ -2,7 +2,7 @@ const API_Link = "http://localhost:8080";
 
 export function postCours(cours) {
   const t = localStorage.getItem("token");
-  return fetch(`${API_Link}/cours/add`, {
+  return fetch(`${API_Link}/cours`, {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -22,7 +22,7 @@ export function postCours(cours) {
 
 export function updateCours(r) {
   const t = localStorage.getItem("token");
-  return fetch(`${API_Link}/cours/add`, {
+  return fetch(`${API_Link}/cours`, {
     method: "PUT",
     headers: {
       Accept: "application/json",
@@ -76,7 +76,7 @@ export function getCoursByMatricule(id) {
 
 export function deleteCours(e) {
   const t = localStorage.getItem("token");
-  return fetch(`${API_Link}/cours/${e.idCour}`, {
+  return fetch(`${API_Link}/cours/${e.idCours}`, {
     method: "DELETE",
     headers: {
       Accept: "application/json",

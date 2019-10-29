@@ -1,9 +1,9 @@
 const API_Link = "http://localhost:8080";
 //const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYWhtb3VkLmJlbmJvdWJrZXIiLCJleHAiOjE1NzI1MDg0MzksImlhdCI6MTU3MTkwMzYzOX0.PG2rmIrjnpj36ozzP52cwOI7ulVqS0pAFh3ZVvonaq5jN2_AT1jEedXFXeWO9cg_QnX7KcYD9nMxOpb8HU0zTg";
 
-export function postEnseignant(enseignant) {
+export function postEtudiant(e) {
   const t = localStorage.getItem('token')
-  return fetch(`${API_Link}/enseignants`, {
+  return fetch(`${API_Link}/etudiants`, {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -13,7 +13,7 @@ export function postEnseignant(enseignant) {
       "Access-Control-Allow-Origin" :  "http://localhost:4200",
       "Authorization" : `Bearer ${t}`
     },
-    body: JSON.stringify(enseignant)
+    body: JSON.stringify(e)
   })
     .then(res => {
       return res;
@@ -21,10 +21,10 @@ export function postEnseignant(enseignant) {
     .catch(err => err);
 }
 
-export function updateEnseignant(enseignant) {
+export function updateEtudiant(e) {
   const t = localStorage.getItem('token')
-  return fetch(`${API_Link}/enseignants`, {
-    method: "PUT",
+  return fetch(`${API_Link}/etudiants`, {
+    method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -33,7 +33,7 @@ export function updateEnseignant(enseignant) {
       "Access-Control-Allow-Origin" :  "http://localhost:4200",
       "Authorization" : `Bearer ${t}`
     },
-    body: JSON.stringify(enseignant)
+    body: JSON.stringify(e)
   })
     .then(res => {
       return res;
@@ -42,9 +42,9 @@ export function updateEnseignant(enseignant) {
 }
 
 
-export function getEnseignants() {
+export function getEtudiants() {
   const t = localStorage.getItem('token')
-  return fetch(`${API_Link}/enseignants`, {
+  return fetch(`${API_Link}/etudiants`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -59,9 +59,9 @@ export function getEnseignants() {
     .catch(error => console.error(error));
 }
 
-export function deleteEnseignant(e) {
+export function deleteEtudiant(e) {
   const t = localStorage.getItem('token')
-  return fetch(`${API_Link}/enseignants/${e.idEnseignant}`, {
+  return fetch(`${API_Link}/etudiants/${e.matricule}`, {
     method: "DELETE",
     headers: {
       Accept: "application/json",

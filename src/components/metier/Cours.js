@@ -7,11 +7,11 @@ import { getCours, deleteCours } from "../../fetch-API/cours";
 export default class Cours extends Component {
   constructor(props) {
     super(props);
-    this.state = { data: [], isLoading: true};
+    this.state = { data: [], isLoading: true };
   }
 
-  updateCours(r){
-   this.props.history.push("/ajouter-cours", { cours: r });
+  updateCours(r) {
+    this.props.history.push("/ajouter-cours", { cours: r });
   }
 
   coursAjouté() {
@@ -32,47 +32,65 @@ export default class Cours extends Component {
     }
   }
 
-  deleteCours(r){
+  affectationCours(r){
+    this.props.history.push("/affectation-cours", { cours: r });
+  }
+
+
+  deleteCours(r) {
     deleteCours(r).then(console.log("Suppression réussite"));
     this.setState({
-      data: this.state.data.filter(e => e.idCour !== r.idCour)
+      data: this.state.data.filter(e => e.idCours !== r.idCours)
     });
   }
- 
- async componentDidMount() {
-  this.setState({isLoading:true, data :[]})
 
-    await  getCours()
-        .then(response => this.setState({ data: response }))
-        .catch()
-      ;
+  async componentDidMount() {
+    this.setState({ isLoading: true, data: [] });
 
-        if(this.props.history.location.state){
-          const r = this.props.history.location.state.enseignant.cours
-          console.log(r)        
-               this.setState({data : r} )
-        }
+    await getCours()
+      .then(response => this.setState({ data: response }))
+      .catch();
 
-        this.setState({isLoading:false})
-    
+    if (this.props.history.location.state) {
+      const r = this.props.history.location.state.enseignant.cours;
+      console.log(r);
+      this.setState({ data: r });
+    }
+
+    this.setState({ isLoading: false });
   }
 
   render() {
-
-    const isLoading = this.state.isLoading
-    if (isLoading){
-      console.log("Loading..")
+    const isLoading = this.state.isLoading;
+    if (isLoading) {
+      console.log("Loading..");
     }
 
     const coursArray = this.state.data.map((r, i) => {
       return (
         <tr key={i}>
-          <td>{r.idCour}</td>
+          <td>{r.idCours}</td>
           <td>{r.intitule}</td>
           <td>{r.description}</td>
           <td>
-            <Button onClick={()=> this.updateCours(r)} variant="outline-success">Modifier</Button>
-            <Button onClick={()=> this.deleteCours(r)} variant="outline-danger">Supprimer</Button>
+            <Button
+              onClick={() => this.affectationCours(r)}
+              variant="outline-primary"
+            >
+              Affecter
+            </Button>
+            <Button
+              onClick={() => this.updateCours(r)}
+              variant="outline-success"
+            >
+              Modifier
+            </Button>
+            <Button
+              onClick={() => this.deleteCours(r)}
+              variant="outline-danger"
+            >
+              Supprimer
+            </Button>
           </td>
         </tr>
       );
@@ -81,7 +99,7 @@ export default class Cours extends Component {
     return (
       <React.Fragment>
         <Wrapper>
-        <Button href="/ajouter-cours">Ajouter Cours</Button>
+          <Button href="/ajouter-cours">Ajouter Cours</Button>
           <Table responsive>
             <thead>
               <tr>
