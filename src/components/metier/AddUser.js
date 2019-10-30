@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Form } from "react-bootstrap";
 import styled from "styled-components";
-import { postEnseignant, updateEnseignant } from "../../fetch-API/users";
+import { postEnseignant } from "../../fetch-API/users";
 
 export default class AddUser extends Component {
   constructor(props) {
@@ -42,15 +42,9 @@ export default class AddUser extends Component {
       prenom: this.state.prenom,
       mail: this.state.email
     };
-    if (this.props.location.state) {
-      updateEnseignant(enseignant).then(
-        this.props.history.push("/enseignants", { enseignant: enseignant })
-      );
-    } else {
-      postEnseignant(enseignant).then(
-        this.props.history.push("/enseignants", { enseignant: enseignant })
-      );
-    }
+
+    postEnseignant(enseignant);
+    this.props.history.push("/enseignants", { enseignant: enseignant });
   }
 
   title() {

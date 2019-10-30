@@ -16,7 +16,6 @@ export default class Enseignant extends Component {
 
   updateEnseignant(r) {
     this.props.history.push("/ajouter-enseignant", { enseignant: r });
-    this.setState({isLoading:true, data :[]})
   }
 
   deleteEnseignant(r) {
@@ -26,9 +25,9 @@ export default class Enseignant extends Component {
     });
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.setState({ isLoading: true, data: [] });
-    await getEnseignants()
+    getEnseignants()
       .then(response => this.setState({ data: response }))
       .then(this.setState({ isLoading: false }));
   }
@@ -38,9 +37,9 @@ export default class Enseignant extends Component {
     if (isLoading) {
       console.log("Loading");
     }
-    const enseignantArray = this.state.data.map((r, i) => {
+    const enseignantArray = this.state.data.map((r, idEnseignant) => {
       return (
-        <tr key={i}>
+        <tr key={idEnseignant}>
           <td>{r.idEnseignant}</td>
           <td>{r.nom}</td>
           <td>{r.prenom}</td>

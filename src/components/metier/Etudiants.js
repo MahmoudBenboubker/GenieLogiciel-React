@@ -49,7 +49,7 @@ export default class Etudiants extends Component {
 
     const etudiants = this.state.data.map((r, i) => {
       return (
-        <tr key={i}>
+        <tr key={r.matricule}>
           <td>{r.matricule}</td>
           <td>{r.nom}</td>
           <td>{r.prenom}</td>

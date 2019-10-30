@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Form } from "react-bootstrap";
 import styled from "styled-components";
-import { postEtudiant, updateEtudiant } from "../../fetch-API/etudiants";
+import { postEtudiant} from "../../fetch-API/etudiants";
 
 export default class AddEtudiant extends Component {
   constructor(props) {
@@ -54,15 +54,12 @@ export default class AddEtudiant extends Component {
       annee : this.state.annee,
       filiere : this.state.filiere
     };
-    if (this.props.location.state) {
-      updateEtudiant(etudiant).then(
+   
+   
+      postEtudiant(etudiant)
+
         this.props.history.push("/etudiants", { etudiant: etudiant })
-      );
-    } else {
-      postEtudiant(etudiant).then(
-        this.props.history.push("/etudiants", { etudiant: etudiant })
-      );
-    }
+  
   }
 
   title() {

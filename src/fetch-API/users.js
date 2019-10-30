@@ -20,7 +20,7 @@ export function postEnseignant(enseignant) {
     })
     .catch(err => err);
 }
-
+/*
 export function updateEnseignant(enseignant) {
   const t = localStorage.getItem('token')
   return fetch(`${API_Link}/enseignants`, {
@@ -39,7 +39,7 @@ export function updateEnseignant(enseignant) {
       return res;
     })
     .catch(err => err);
-}
+}*/
 
 
 export function getEnseignants() {

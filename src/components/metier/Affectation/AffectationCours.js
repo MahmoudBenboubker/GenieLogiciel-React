@@ -1,8 +1,12 @@
 import React, { Component } from "react";
-import { Form } from "react-bootstrap";
+import { Form, Table, Button } from "react-bootstrap";
 import styled from "styled-components";
 import { getEnseignants } from "../../../fetch-API/users";
-import {affectationEnseignantCours} from "../../../fetch-API/affectation"
+import { getEtudiants } from "../../../fetch-API/etudiants";
+import {
+  affectationEnseignantCours,
+  affectationeEtudiantCours
+} from "../../../fetch-API/affectation";
 
 export default class AffectationCours extends Component {
   constructor(props) {
@@ -13,8 +17,10 @@ export default class AffectationCours extends Component {
       prenom: "",
       email: "",
       intitule: "",
-      idCours : "",
-      dataEnseignant: []
+      idCours: "",
+      dataEnseignant: [],
+      allEtudiants: [],
+      etudiants: []
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -33,9 +39,18 @@ export default class AffectationCours extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const state  = this.state
-    console.log(state)
-    affectationEnseignantCours(state.idEnseignant,state.idCours).then(console.log("Done"))
+    const state = this.state;
+    console.log(state.etudiants);
+    affectationEnseignantCours(
+      parseInt(state.idEnseignant, 10),
+      state.idCours
+    ).then(console.log("Done"));
+
+    this.state.etudiants.forEach(e => {
+      affectationeEtudiantCours(e.matricule,state.idCours).then(console.log("Done etudiant-cours"))
+    });
+
+    this.props.history.push("/");
   }
 
   componentDidMount() {
@@ -43,7 +58,9 @@ export default class AffectationCours extends Component {
       const e = this.props.location.state.cours;
       this.setState({
         intitule: e.intitule,
-        idCours : e.idCours
+        idCours: e.idCours,
+        etudiants: e.etudiants,
+        idEnseignant: e.ens.idEnseignant
       });
     } else {
     }
@@ -51,6 +68,10 @@ export default class AffectationCours extends Component {
     getEnseignants().then(response =>
       this.setState({ dataEnseignant: response })
     );
+
+    getEtudiants().then(response => {
+      this.setState({ allEtudiants: response });
+    });
   }
 
   title() {
@@ -75,11 +96,69 @@ export default class AffectationCours extends Component {
         </option>
       );
     });
+
+    const etudiants = this.state.etudiants.map((r, i) => {
+      return (
+        <tr key={i}>
+          <td>{r.matricule}</td>
+          <td>{r.nom}</td>
+          <td>{r.prenom}</td>
+          <td>{r.annee}</td>
+          <td>{r.filiere}</td>
+          <td>{r.mail}</td>
+          <td>
+            <Button
+              onClick={() => this.updateEtudiant(r)}
+              variant="outline-primary"
+            >
+              Information
+            </Button>
+            <Button
+              onClick={() => this.deleteEtudiant(r)}
+              variant="outline-danger"
+            >
+              Retirer
+            </Button>
+          </td>
+        </tr>
+      );
+    });
+
+    const allEtudiants = [];
+
+    this.state.allEtudiants.forEach(e => {
+      if (this.state.etudiants.find(r => r.matricule === e.matricule)) {
+      } else {
+        allEtudiants.push(e);
+      }
+    });
+
+    const allEtudiantsDisplay = allEtudiants.map((r, i) => {
+      return (
+        <tr key={i}>
+          <td>{r.matricule}</td>
+          <td>{r.nom}</td>
+          <td>{r.prenom}</td>
+          <td>{r.annee}</td>
+          <td>{r.filiere}</td>
+          <td>{r.mail}</td>
+          <td>
+            <Button
+              onClick={() => this.affecterEtudiant(r)}
+              variant="outline-success"
+            >
+              Affecter
+            </Button>
+          </td>
+        </tr>
+      );
+    });
+
     return (
       <React.Fragment>
         {this.title()}
         <Wrapper>
-          <Form onSubmit={this.handleSubmit}>
+          <Form>
             <Form.Group controlId="formLastName">
               <Form.Label>Enseignant</Form.Label>
               <Form.Control
@@ -89,18 +168,60 @@ export default class AffectationCours extends Component {
                 onChange={this.handleInputChange}
                 as="select"
               >
-                  <option value=""> - Enseignant -</option>
+                <option value=""> - Enseignant -</option>
                 {enseignants}
               </Form.Control>
             </Form.Group>
 
-            <Button onSubmit={this.handleSubmit} primary type="submit">
+            <Form.Group controlId="formLastName">
+              <Form.Label>Etudiants déjà inscrits</Form.Label>
+              <Table responsive>
+                <thead>
+                  <tr>
+                    <th>Matricule</th>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>Année</th>
+                    <th>Filière</th>
+                    <th>Mail</th>
+                    <th> </th>
+                  </tr>
+                </thead>
+                <tbody>{etudiants} </tbody>
+              </Table>
+            </Form.Group>
+
+            <Form.Group controlId="formLastName">
+              <Form.Label>Liste des étudiants non inscrits</Form.Label>
+              <Table responsive>
+                <thead>
+                  <tr>
+                    <th>Matricule</th>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>Année</th>
+                    <th>Filière</th>
+                    <th>Mail</th>
+                    <th> </th>
+                  </tr>
+                </thead>
+                <tbody> {allEtudiantsDisplay}</tbody>
+              </Table>
+            </Form.Group>
+            <ButtonBR onClick={this.handleSubmit} primary>
               Confirmer
-            </Button>
+            </ButtonBR>
           </Form>
         </Wrapper>
       </React.Fragment>
     );
+  }
+
+  affecterEtudiant(r) {
+    console.log(r);
+    const array = this.state.etudiants;
+    array.push(r);
+    this.setState({ etudiants: array });
   }
 }
 
@@ -113,7 +234,7 @@ const Wrapper = styled.div`
   flex-direction: row;
 `;
 
-const Button = styled.button`
+const ButtonBR = styled.button`
   color: #fff;
   background-color: #428bca;
   font-size: 1em;
