@@ -44,7 +44,7 @@ export default class AddUser extends Component {
     };
 
     postEnseignant(enseignant);
-    this.props.history.push("/enseignants", { enseignant: enseignant });
+    this.props.history.push("/enseignants", { enseignant: enseignant, update : true });
   }
 
   title() {

@@ -41,6 +41,10 @@ export default class Etudiants extends Component {
     this.props.history.push("/ajouter-etudiant", { etudiant: r });
    }
 
+   affecterEtudiant(r){
+    this.props.history.push("affectation-etudiant", { etudiant: r });
+   }
+
   render() {
     const isLoading = this.state.isLoading;
     if (isLoading) {
@@ -58,7 +62,7 @@ export default class Etudiants extends Component {
           <td>{r.mail}</td>
           <td>
           <Button
-              onClick={() => this.updateEtudiant(r)}
+              onClick={() => this.affecterEtudiant(r)}
               variant="outline-primary"
             >
               Affecter

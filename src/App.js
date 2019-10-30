@@ -13,6 +13,7 @@ import Connexion from "./components/Connexion";
 import Etudiants from "./components/metier/Etudiants";
 import AffectationCours from "./components/metier/Affectation/AffectationCours";
 import AffectationEnseignant from "./components/metier/Affectation/AffectationEnseignant";
+import AffectationEtudiant from "./components/metier/Affectation/AffectationEtudiant";
 
 
 export default class App extends Component {
@@ -40,6 +41,7 @@ export default class App extends Component {
           <Route exact path="/etudiants" component={Etudiants} />
           <Route exact path="/affectation-cours" component={AffectationCours} />
           <Route exact path="/affectation-enseignant" component={AffectationEnseignant} />
+          <Route exact path="/affectation-etudiant" component={AffectationEtudiant} />
           <Route exact path="/connexion" component={Connexion} />
         </Switch>
       </Router>

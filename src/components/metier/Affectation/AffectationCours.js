@@ -5,14 +5,15 @@ import { getEnseignants } from "../../../fetch-API/users";
 import { getEtudiants } from "../../../fetch-API/etudiants";
 import {
   affectationEnseignantCours,
-  affectationeEtudiantCours
+  affectationeEtudiantCours,
+  deleteAffectationeEtudiantCours
 } from "../../../fetch-API/affectation";
 
 export default class AffectationCours extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      idEnseignant: "",
+      idEnseignant: "0",
       nom: "",
       prenom: "",
       email: "",
@@ -60,10 +61,14 @@ export default class AffectationCours extends Component {
         intitule: e.intitule,
         idCours: e.idCours,
         etudiants: e.etudiants,
-        idEnseignant: e.ens.idEnseignant
       });
-    } else {
-    }
+    
+     if (e.ens){
+       this.setState({
+         idEnseignant : e.ens.idEnseignant
+       })
+     }
+    } 
 
     getEnseignants().then(response =>
       this.setState({ dataEnseignant: response })
@@ -86,6 +91,14 @@ export default class AffectationCours extends Component {
       );
     } else {
       return <Title>Ajouter d'un nouvel enseignant</Title>;
+    }
+  }
+
+  pasEnseignant() {
+    if (this.state.idEnseignant === "0"){
+      return(
+       <div> <font color="red" > Pas d'enseignant assigné.</font> </div>
+      )
     }
   }
   render() {
@@ -114,7 +127,7 @@ export default class AffectationCours extends Component {
               Information
             </Button>
             <Button
-              onClick={() => this.deleteEtudiant(r)}
+              onClick={() => this.retirerEtudiant(r)}
               variant="outline-danger"
             >
               Retirer
@@ -160,7 +173,7 @@ export default class AffectationCours extends Component {
         <Wrapper>
           <Form>
             <Form.Group controlId="formLastName">
-              <Form.Label>Enseignant</Form.Label>
+              <Form.Label>Enseignant {this.pasEnseignant()} </Form.Label>
               <Form.Control
                 required
                 name="idEnseignant"
@@ -168,7 +181,7 @@ export default class AffectationCours extends Component {
                 onChange={this.handleInputChange}
                 as="select"
               >
-                <option value=""> - Enseignant -</option>
+                <option value="0"> - Enseignant -</option>
                 {enseignants}
               </Form.Control>
             </Form.Group>
@@ -222,6 +235,12 @@ export default class AffectationCours extends Component {
     const array = this.state.etudiants;
     array.push(r);
     this.setState({ etudiants: array });
+  }
+
+  retirerEtudiant(r){
+    const array = this.state.etudiants.filter( e => e.matricule !== r.matricule)
+    this.setState({ etudiants : array})
+    deleteAffectationeEtudiantCours(r.matricule, this.state.idCours).then("Supression")
   }
 }
 

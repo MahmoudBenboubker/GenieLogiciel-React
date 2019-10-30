@@ -1,21 +1,22 @@
 import React, { Component } from "react";
-import { Table, Button } from "react-bootstrap";
+import { Form, Table, Button } from "react-bootstrap";
 import styled from "styled-components";
 import { getCours } from "../../../fetch-API/cours";
-import { affectationEnseignantCours, deleteAffectationeEnseignantCours } from "../../../fetch-API/affectation";
+import { affectationeEtudiantCours, deleteAffectationeEtudiantCours } from "../../../fetch-API/affectation";
 
-export default class AffectationEnseignant extends Component {
+
+export default class AffectationEtudiant extends Component {
   constructor(props) {
     super(props);
-    this.state = { idEnseignant: "", cours: [], allCours: [] };
+    this.state = { cours: [], etudiant: "", allCours: [] };
   }
 
   componentDidMount() {
-    if (this.props.history.location.state) {
-      const state = this.props.history.location.state;
+    if (this.props.location.state) {
+      const e = this.props.location.state.etudiant;
       this.setState({
-        idEnseignant: state.enseignant.idEnseignant,
-        cours: state.enseignant.cours
+        etudiant: e,
+        cours: e.cours
       });
     }
 
@@ -24,7 +25,7 @@ export default class AffectationEnseignant extends Component {
       .catch();
   }
 
-  render() {
+  tableCoursAffected() {
     const cours = this.state.cours.map((r, i) => {
       return (
         <tr key={i}>
@@ -38,6 +39,7 @@ export default class AffectationEnseignant extends Component {
             >
               Information
             </Button>
+            {"  "}
             <Button
               onClick={() => this.deleteCours(r)}
               variant="outline-danger"
@@ -49,36 +51,8 @@ export default class AffectationEnseignant extends Component {
       );
     });
 
-    const allCours = [];
-
-    this.state.allCours.forEach(c => {
-      if (this.state.cours.find(r => r.idCours === c.idCours)) {
-      } else {
-        allCours.push(c);
-      }
-    });
-
-    const allCoursDisplay = allCours.map((r, i) => {
+    if (this.state.cours.length !== 0) {
       return (
-        <tr key={i}>
-          <td>{r.idCours}</td>
-          <td>{r.intitule}</td>
-          <td>{r.description} </td>
-          <td>
-            <Button
-              onClick={() => this.affectationCours(r)}
-              variant="outline-primary"
-            >
-              {" "}
-              Associer
-            </Button>
-          </td>
-        </tr>
-      );
-    });
-
-    return (
-      <Wrapper>
         <Table responsive>
           <thead>
             <tr>
@@ -90,10 +64,48 @@ export default class AffectationEnseignant extends Component {
           </thead>
           <tbody>{cours}</tbody>
         </Table>
+      );
+    } else {
+      return (
+        <div>
+          <font color="red"> Inscrits à aucun cours.</font>
+        </div>
+      );
+    }
+  }
 
-        <Title>Affecter nouveaux cours</Title>
+  tableAutreCours() {
+    if (this.state.cours.length !== 0) {
+      const allCours = [];
 
-        <Table responsivee>
+      this.state.allCours.forEach(c => {
+        if (this.state.cours.find(r => r.idCours === c.idCours)) {
+        } else {
+          allCours.push(c);
+        }
+      });
+
+      const allCoursDisplay = allCours.map((r, i) => {
+        return (
+          <tr key={i}>
+            <td>{r.idCours}</td>
+            <td>{r.intitule}</td>
+            <td>{r.description} </td>
+            <td>
+              <Button
+                onClick={() => this.affectationCours(r)}
+                variant="outline-primary"
+              >
+                {" "}
+                Associer
+              </Button>
+            </td>
+          </tr>
+        );
+      });
+
+      return (
+        <Table responsive>
           <thead>
             <tr>
               <th>Identifiant</th>
@@ -102,19 +114,46 @@ export default class AffectationEnseignant extends Component {
               <th> </th>
             </tr>
           </thead>
-          <tbody>{allCoursDisplay}</tbody>
+          <tbody> {allCoursDisplay}</tbody>
         </Table>
+      );
+    } else {
+      return (
+        <div>
+          <font color="red"> Aucun autre cours disponible.</font>
+        </div>
+      );
+    }
+  }
 
-        <Button
+  render() {
+    return (
+      <React.Fragment>
+        <Title> Affectation de l'élève</Title>
+        <Wrapper>
+          <Form>
+            <Form.Group controlId="formLastName">
+              <Form.Label>Inscrit aux cours</Form.Label>
+              {this.tableCoursAffected()}
+            </Form.Group>
+
+            <Form.Group controlId="formLastName">
+              <Form.Label>Affecter Nouveaux Cours</Form.Label>
+              {this.tableAutreCours()}
+            </Form.Group>
+          </Form>
+
+          <Button
           onClick={() => this.confirmAffectation()}
           variant="outline-success"
         >
           Confirmer les changements
         </Button>
-      </Wrapper>
+
+        </Wrapper>
+      </React.Fragment>
     );
   }
-
   affectationCours(r) {
     let array = this.state.cours;
     array.push(r);
@@ -129,10 +168,10 @@ export default class AffectationEnseignant extends Component {
     const state = this.state;
     this.state.cours.forEach(e => {
       console.log(e);
-      affectationEnseignantCours(state.idEnseignant, e.idCours);
+      affectationeEtudiantCours(state.etudiant.matricule,e.idCours);
       console.log("Affectation réussie");
     });
-    this.props.history.push("/enseignants",{update : true});
+    this.props.history.push("/");
   }
 
   deleteCours(r) {
@@ -143,20 +182,20 @@ export default class AffectationEnseignant extends Component {
     array = this.state.allCours;
     array.push(r);
     this.setState({ allCours: array });
- 
-    deleteAffectationeEnseignantCours(this.state.idEnseignant,r.idCours).then(
+
+    deleteAffectationeEtudiantCours(this.state.etudiant.matricule, r.idCours).then(
       console.log("Supprimer")
     )
-
   }
 }
+
 const Wrapper = styled.div`
+  padding: 4em;
   border: 5px solid #428bca;
   border-radius: 8px;
-  margin: 0em 4em;
+  margin: 4em;
   flex: 5 5;
   flex-direction: row;
-  background-color: gray 0.4;
 `;
 
 const Title = styled.h1`

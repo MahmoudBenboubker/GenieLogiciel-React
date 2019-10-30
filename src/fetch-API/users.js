@@ -42,9 +42,9 @@ export function updateEnseignant(enseignant) {
 }*/
 
 
-export function getEnseignants() {
+export async function getEnseignants() {
   const t = localStorage.getItem('token')
-  return fetch(`${API_Link}/enseignants`, {
+  return await fetch(`${API_Link}/enseignants`, {
     method: "GET",
     headers: {
       Accept: "application/json",

@@ -7,7 +7,7 @@ import { getEnseignants, deleteEnseignant } from "../../fetch-API/users.js";
 export default class Enseignant extends Component {
   constructor(props) {
     super(props);
-    this.state = { data: [], isLoading: true };
+    this.state = { data: [], isLoading: true, update: false };
   }
 
   showCours(r) {
@@ -25,22 +25,27 @@ export default class Enseignant extends Component {
     });
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.setState({ isLoading: true, data: [] });
-    getEnseignants()
+    await getEnseignants()
       .then(response => this.setState({ data: response }))
       .then(this.setState({ isLoading: false }));
   }
 
   render() {
-    const isLoading = this.state.isLoading;
-    if (isLoading) {
-      console.log("Loading");
+    let update = false;
+    if (this.props.location.state) {
+      update = true;
     }
+
+    if (update) {
+      getEnseignants().then(response => this.setState({ data: response }));
+      update = false;
+    }
+
     const enseignantArray = this.state.data.map((r, idEnseignant) => {
       return (
         <tr key={idEnseignant}>
-          <td>{r.idEnseignant}</td>
           <td>{r.nom}</td>
           <td>{r.prenom}</td>
           <td>{r.mail}</td>
@@ -53,7 +58,7 @@ export default class Enseignant extends Component {
               variant="outline-success"
             >
               Modifier
-            </Button>
+            </Button> {" "}
             <Button
               onClick={() => this.deleteEnseignant(r)}
               variant="outline-danger"
@@ -76,7 +81,6 @@ export default class Enseignant extends Component {
         <Table responsive>
           <thead>
             <tr>
-              <th>Matricule</th>
               <th>Nom</th>
               <th>Prenom</th>
               <th>Email</th>
