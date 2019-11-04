@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { Form } from "react-bootstrap";
+import { Form,Alert } from "react-bootstrap";
 import styled from "styled-components";
-import { postEtudiant} from "../../fetch-API/etudiants";
+import { postEtudiant } from "../../fetch-API/etudiants";
 
 export default class AddEtudiant extends Component {
   constructor(props) {
@@ -12,7 +12,8 @@ export default class AddEtudiant extends Component {
       prenom: "",
       mail: "",
       annee: 0,
-      filiere: ""
+      filiere: "",
+      error: false
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -26,8 +27,8 @@ export default class AddEtudiant extends Component {
         mail: e.mail,
         nom: e.nom,
         prenom: e.prenom,
-        annee : e.annee,
-        filiere : e.filiere
+        annee: e.annee,
+        filiere: e.filiere
       });
     } else {
     }
@@ -51,15 +52,17 @@ export default class AddEtudiant extends Component {
       nom: this.state.nom,
       prenom: this.state.prenom,
       mail: this.state.mail,
-      annee : this.state.annee,
-      filiere : this.state.filiere
+      annee: this.state.annee,
+      filiere: this.state.filiere
     };
-   
-   
-      postEtudiant(etudiant)
 
-        this.props.history.push("/etudiants", { etudiant: etudiant })
-  
+    if (this.state.annee === 0 && this.state.filiere === "") {
+      this.setState({ error: true });
+    } else {
+      postEtudiant(etudiant);
+
+      this.props.history.push("/etudiants", { etudiant: etudiant });
+    }
   }
 
   title() {
@@ -140,6 +143,7 @@ export default class AddEtudiant extends Component {
                 onChange={this.handleInputChange}
                 as="select"
               >
+                <option> - Année -</option>
                 <option value="1">Première Année</option>
                 <option value="2">Deuxième Année</option>
                 <option value="3">Troisième Année</option>
@@ -155,6 +159,7 @@ export default class AddEtudiant extends Component {
                 onChange={this.handleInputChange}
                 as="select"
               >
+                <option>- Génie -</option>
                 <option value="Informatique">Informatique</option>
                 <option value="Civil">Civil</option>
                 <option value="Minéral">Minéral</option>
@@ -162,7 +167,7 @@ export default class AddEtudiant extends Component {
                 <option value="Industriel">Industriel</option>
               </Form.Control>
             </Form.Group>
-
+            {this.allInput()}
             <Button onSubmit={this.handleSubmit} primary type="submit">
               Confirmer
             </Button>
@@ -170,6 +175,12 @@ export default class AddEtudiant extends Component {
         </Wrapper>
       </React.Fragment>
     );
+  }
+
+  allInput() {
+    if (this.state.error) {
+      return <Alert variant="danger">Veuillez spécifier l'année et la filière</Alert>;
+    }
   }
 }
 

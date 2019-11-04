@@ -42,7 +42,6 @@ export default class Connexion extends Component {
   render() {
     return (
       <Wrapper>
-        <FormBS>
           <Form onSubmit={this.handleSubmit}>
             <Form.Group controlId="formBasicEmail">
               <Form.Label>Identifiant</Form.Label>
@@ -73,23 +72,18 @@ export default class Connexion extends Component {
               Se Connecter
             </Button>
           </Form>
-        </FormBS>
       </Wrapper>
     );
   }
 }
 
 const Wrapper = styled.div`
+  padding: 4em;
   border: 5px solid #428bca;
   border-radius: 8px;
-  margin: 0em 4em;
+  margin: 4em;
   flex: 5 5;
   flex-direction: row;
-  background-color: gray 0.4;
 `;
 
-const FormBS = styled.div`
-  margin: 0em 4em;
-  flex: 5 5;
-  flex-direction: row;
-`;
+

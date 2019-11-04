@@ -2,8 +2,10 @@ import React, { Component } from "react";
 import { Form, Table, Button } from "react-bootstrap";
 import styled from "styled-components";
 import { getCours } from "../../../fetch-API/cours";
-import { affectationeEtudiantCours, deleteAffectationeEtudiantCours } from "../../../fetch-API/affectation";
-
+import {
+  affectationeEtudiantCours,
+  deleteAffectationeEtudiantCours
+} from "../../../fetch-API/affectation";
 
 export default class AffectationEtudiant extends Component {
   constructor(props) {
@@ -75,7 +77,7 @@ export default class AffectationEtudiant extends Component {
   }
 
   tableAutreCours() {
-    if (this.state.cours.length !== 0) {
+   
       const allCours = [];
 
       this.state.allCours.forEach(c => {
@@ -117,14 +119,11 @@ export default class AffectationEtudiant extends Component {
           <tbody> {allCoursDisplay}</tbody>
         </Table>
       );
-    } else {
-      return (
-        <div>
-          <font color="red"> Aucun autre cours disponible.</font>
-        </div>
-      );
+    
+
+  
+      
     }
-  }
 
   render() {
     return (
@@ -144,12 +143,11 @@ export default class AffectationEtudiant extends Component {
           </Form>
 
           <Button
-          onClick={() => this.confirmAffectation()}
-          variant="outline-success"
-        >
-          Confirmer les changements
-        </Button>
-
+            onClick={() => this.confirmAffectation()}
+            variant="outline-success"
+          >
+            Confirmer les changements
+          </Button>
         </Wrapper>
       </React.Fragment>
     );
@@ -168,10 +166,10 @@ export default class AffectationEtudiant extends Component {
     const state = this.state;
     this.state.cours.forEach(e => {
       console.log(e);
-      affectationeEtudiantCours(state.etudiant.matricule,e.idCours);
+      affectationeEtudiantCours(state.etudiant.matricule, e.idCours);
       console.log("Affectation réussie");
     });
-    this.props.history.push("/");
+    this.props.history.push("/etudiants");
   }
 
   deleteCours(r) {
@@ -183,9 +181,10 @@ export default class AffectationEtudiant extends Component {
     array.push(r);
     this.setState({ allCours: array });
 
-    deleteAffectationeEtudiantCours(this.state.etudiant.matricule, r.idCours).then(
-      console.log("Supprimer")
-    )
+    deleteAffectationeEtudiantCours(
+      this.state.etudiant.matricule,
+      r.idCours
+    ).then(console.log("Supprimer"));
   }
 }
 

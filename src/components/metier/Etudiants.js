@@ -7,7 +7,7 @@ import { getEtudiants, deleteEtudiant } from "../../fetch-API/etudiants";
 export default class Etudiants extends Component {
   constructor(props) {
     super(props);
-    this.state = { data: [], isLoading: true, error: false };
+    this.state = { data: [], isLoading: true, error: false, errorDelete : false };
   }
 
   componentDidMount() {
@@ -21,91 +21,117 @@ export default class Etudiants extends Component {
     });
   }
 
-  showErrors(){
-      if (this.state.error){
-          return(
-            <Alert variant="danger">La connexion a échouée.</Alert>
-          )
-      }
+  showErrors() {
+    if (this.state.error) {
+      return <Alert variant="danger">La connexion a échouée.</Alert>;
+    }
   }
 
-  deleteEtudiant(r){
-   deleteEtudiant(r).then(console.log("Suppression réussite"));
+  deleteEtudiant(r) {
+    if (!r.cours[0]){
+    deleteEtudiant(r).then(console.log("Suppression réussite"));
     this.setState({
-      data: this.state.data.filter(e => e.matricule !== r.matricule)
-    });
+      data: this.state.data.filter(e => e.matricule !== r.matricule),
+      errorDelete : false
+    });}
+    else {
+      this.setState({errorDelete : true})
+    }
   }
 
-  
-  updateEtudiant(r){
-    this.props.history.push("/ajouter-etudiant", { etudiant: r });
-   }
+  errorDelete(){
+    if (this.state.errorDelete) {
+      return <Alert variant="danger">Veuillez desinscrire cet enseignant de tout ses cours.</Alert>;
+    }
+  }
 
-   affecterEtudiant(r){
+  updateEtudiant(r) {
+    this.setState({ isLoading: true });
+    console.log("isLoading = true");
+    this.props.history.push("/ajouter-etudiant", { etudiant: r });
+  }
+
+  affecterEtudiant(r) {
+    this.setState({ isLoading: true });
+    console.log("isLoading = true");
     this.props.history.push("affectation-etudiant", { etudiant: r });
-   }
+  }
+
+  newEtudiant() {
+    this.setState({ isLoading: true });
+    console.log("isLoading = true");
+    this.props.history.push("ajouter-etudiant");
+  }
 
   render() {
-    const isLoading = this.state.isLoading;
-    if (isLoading) {
+    if (this.state.isLoading) {
+      getEtudiants().then(response => {
+        if (response) {
+          this.setState({ isLoading: false, data: response });
+        } else {
+          this.setState({ error: true });
+        }
+      });
       console.log("Loading..");
-    }
+      return <div>Loading</div>;
+    } else {
+      const etudiants = this.state.data.map((r, i) => {
+        return (
+          <tr key={r.matricule}>
+            <td>{r.matricule}</td>
+            <td>{r.nom}</td>
+            <td>{r.prenom}</td>
+            <td>{r.annee}</td>
+            <td>{r.filiere}</td>
+            <td>{r.mail}</td>
+            <td>
+              <Button
+                onClick={() => this.affecterEtudiant(r)}
+                variant="outline-primary"
+              >
+                Affecter
+              </Button>
+              <Button
+                onClick={() => this.updateEtudiant(r)}
+                variant="outline-success"
+              >
+                Modifier
+              </Button>
+              <Button
+                onClick={() => this.deleteEtudiant(r)}
+                variant="outline-danger"
+              >
+                Supprimer
+              </Button>
+            </td>
+          </tr>
+        );
+      });
 
-    const etudiants = this.state.data.map((r, i) => {
       return (
-        <tr key={r.matricule}>
-          <td>{r.matricule}</td>
-          <td>{r.nom}</td>
-          <td>{r.prenom}</td>
-          <td>{r.annee}</td>
-          <td>{r.filiere}</td>
-          <td>{r.mail}</td>
-          <td>
-          <Button
-              onClick={() => this.affecterEtudiant(r)}
-              variant="outline-primary"
-            >
-              Affecter
-            </Button>
-            <Button
-              onClick={() => this.updateEtudiant(r)}
-              variant="outline-success"
-            >
-              Modifier
-            </Button>
-            <Button
-              onClick={() => this.deleteEtudiant(r)}
-              variant="outline-danger"
-            >
-              Supprimer
-            </Button>
-          </td>
-        </tr>
-      );
-    });
-
-    return (
-      <React.Fragment>
-        <Wrapper>
+        <React.Fragment>
+          <Wrapper>
             {this.showErrors()}
-          <Button href="/ajouter-etudiant">Ajouter Étudiant</Button>
-          <Table responsive>
-            <thead>
-              <tr>
-                <th>Matricule</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <th>Année</th>
-                <th>Filière</th>
-                <th>Mail</th>
-                <th>{" "}</th>
-              </tr>
-            </thead>
-            <tbody> {etudiants} </tbody>
-          </Table>
-        </Wrapper>
-      </React.Fragment>
-    );
+            <Button onClick={() => this.newEtudiant()}>Ajouter Étudiant</Button>
+            {this.errorDelete()}
+            <Table responsive>
+              <thead>
+                <tr>
+                  <th>Matricule</th>
+                  <th>Nom</th>
+                  <th>Prenom</th>
+                  <th>Année</th>
+                  <th>Filière</th>
+                  <th>Mail</th>
+                  <th> </th>
+                </tr>
+              </thead>
+              <tbody> {etudiants} </tbody>
+            </Table>
+          </Wrapper>
+        </React.Fragment>
+      );
+    }
   }
 }
 

@@ -7,10 +7,12 @@ import { getCours, deleteCours } from "../../fetch-API/cours";
 export default class Cours extends Component {
   constructor(props) {
     super(props);
-    this.state = { data: [], isLoading: true };
+    this.state = { data: [], isLoading: true, errorDelete : false };
   }
 
   updateCours(r) {
+    this.setState({ isLoading : true})
+    console.log("isLoading = true")
     this.props.history.push("/ajouter-cours", { cours: r });
   }
 
@@ -33,39 +35,53 @@ export default class Cours extends Component {
   }
 
   affectationCours(r){
+    this.setState({ isLoading : true})
+    console.log("isLoading = true")
     this.props.history.push("/affectation-cours", { cours: r });
+  }
+
+  newCours(){
+    this.setState({ isLoading : true})
+    console.log("isLoading = true")
+    this.props.history.push("/ajouter-cours");
   }
 
 
   deleteCours(r) {
-    deleteCours(r).then(console.log("Suppression réussite"));
+    if (!r.etudiants[0] && !r.ens)
+  {  deleteCours(r).then(console.log("Suppression réussite"));
     this.setState({
       data: this.state.data.filter(e => e.idCours !== r.idCours)
     });
+    this.setState({errorDelete : false})}
+    else {
+      this.setState({errorDelete : true})
+    }
   }
 
-  async componentDidMount() {
+   componentDidMount() {
     this.setState({ isLoading: true, data: [] });
 
-    await getCours()
-      .then(response => this.setState({ data: response }))
-      .catch();
+     getCours()
+      .then(response => this.setState({ data: response, isLoading : false }))
 
     if (this.props.history.location.state) {
       const r = this.props.history.location.state.enseignant.cours;
       console.log(r);
-      this.setState({ data: r });
+      this.setState({ data: r, isLoading: false });
     }
 
-    this.setState({ isLoading: false });
   }
 
   render() {
-    const isLoading = this.state.isLoading;
-    if (isLoading) {
+  
+    if (this.state.isLoading) {
+      getCours()
+      .then(response => this.setState({ data: response, isLoading : false }))
       console.log("Loading..");
+      return( <div />)
     }
-
+    else {
     const coursArray = this.state.data.map((r, i) => {
       return (
         <tr key={i}>
@@ -99,7 +115,8 @@ export default class Cours extends Component {
     return (
       <React.Fragment>
         <Wrapper>
-          <Button href="/ajouter-cours">Ajouter Cours</Button>
+          <Button onClick={() => this.newCours()}>Ajouter Cours</Button>
+          {this.errorDelete()}
           <Table responsive>
             <thead>
               <tr>
@@ -114,6 +131,12 @@ export default class Cours extends Component {
         </Wrapper>
       </React.Fragment>
     );
+    }
+  }
+  errorDelete(){
+    if (this.state.errorDelete) {
+      return <Alert variant="danger">Veuillez desinscrire l'enseignant et les élèves de cecours.</Alert>;
+    }
   }
 }
 
